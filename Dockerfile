@@ -33,6 +33,7 @@ RUN addgroup --system --gid 1001 nodejs && \
 # Install production node_modules fresh (no devDeps, no scripts)
 COPY package.json package-lock.json* ./
 COPY prisma ./prisma/
+COPY prisma.config.ts ./
 RUN npm ci --omit=dev --ignore-scripts
 
 # Generate Prisma client in runner (uses DATABASE_URL from runtime env)
