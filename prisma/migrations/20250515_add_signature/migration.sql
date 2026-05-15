@@ -1,2 +1,2 @@
 -- AlterTable: add signature image column to User
-ALTER TABLE "User" ADD COLUMN "signatureImage" TEXT;
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "signatureImage" TEXT;

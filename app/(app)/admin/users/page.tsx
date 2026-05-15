@@ -67,7 +67,7 @@ export default function AdminUsersPage() {
     setShowModal(true);
   }
 
-  function openEdit(u: User) {
+  async function openEdit(u: User) {
     setEditing(u);
     setForm({
       username: u.username,
@@ -76,9 +76,17 @@ export default function AdminUsersPage() {
       departmentName: u.departmentName ?? '',
       role: u.role,
     });
-    setSigImage(u.signatureImage ?? null);
+    setSigImage(null);
     setError('');
     setShowModal(true);
+    // Fetch full profile to get signatureImage (not included in list response)
+    try {
+      const res = await fetch(`/api/users/${u.id}`);
+      if (res.ok) {
+        const full = await res.json();
+        setSigImage(full.signatureImage ?? null);
+      }
+    } catch { /* leave sigImage as null */ }
   }
 
   function onSigFileChange(e: React.ChangeEvent<HTMLInputElement>) {
