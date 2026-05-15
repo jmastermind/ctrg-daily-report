@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type User = {
   id: string;
   username: string;
   displayName: string;
   departmentName: string | null;
+  signatureImage: string | null;
   role: 'USER' | 'SUPERVISOR' | 'ADMIN';
   active: boolean;
   createdAt: string;
@@ -39,8 +40,10 @@ export default function AdminUsersPage() {
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<User | null>(null);
   const [form, setForm] = useState({ ...EMPTY_FORM });
+  const [sigImage, setSigImage] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const sigFileRef = useRef<HTMLInputElement>(null);
 
   async function load() {
     setLoading(true);
@@ -59,6 +62,7 @@ export default function AdminUsersPage() {
   function openNew() {
     setEditing(null);
     setForm({ ...EMPTY_FORM });
+    setSigImage(null);
     setError('');
     setShowModal(true);
   }
@@ -72,8 +76,24 @@ export default function AdminUsersPage() {
       departmentName: u.departmentName ?? '',
       role: u.role,
     });
+    setSigImage(u.signatureImage ?? null);
     setError('');
     setShowModal(true);
+  }
+
+  function onSigFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 1_500_000) {
+      setError('Slika potpisa je prevelika (max 1.5 MB).');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = (reader.result as string).split(',')[1];
+      setSigImage(base64);
+    };
+    reader.readAsDataURL(file);
   }
 
   async function save() {
@@ -85,6 +105,7 @@ export default function AdminUsersPage() {
         displayName: form.displayName,
         departmentName: form.departmentName || null,
         role: form.role,
+        signatureImage: sigImage,
       };
       if (form.password) body.password = form.password;
 
@@ -282,6 +303,46 @@ export default function AdminUsersPage() {
                   <option value="SUPERVISOR">Nadzornik</option>
                   <option value="ADMIN">Administrator</option>
                 </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Potpis</label>
+                <div className="border border-dashed border-gray-300 rounded-lg bg-gray-50 flex flex-col items-center justify-center min-h-[80px] mb-2 relative overflow-hidden">
+                  {sigImage ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={`data:image/png;base64,${sigImage}`}
+                      alt="Potpis"
+                      className="max-h-20 max-w-full object-contain"
+                    />
+                  ) : (
+                    <p className="text-xs text-gray-400 py-3">Nema potpisa</p>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => sigFileRef.current?.click()}
+                    className="flex-1 py-2 border border-[#C41230] text-[#C41230] rounded-lg text-xs font-medium hover:bg-red-50 transition"
+                  >
+                    {sigImage ? 'Zamijeni potpis' : 'Upload potpisa'}
+                  </button>
+                  {sigImage && (
+                    <button
+                      type="button"
+                      onClick={() => setSigImage(null)}
+                      className="px-3 py-2 text-red-500 hover:bg-red-50 rounded-lg text-xs transition"
+                    >
+                      Ukloni
+                    </button>
+                  )}
+                </div>
+                <input
+                  ref={sigFileRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  className="hidden"
+                  onChange={onSigFileChange}
+                />
               </div>
             </div>
             <div className="flex gap-3 px-6 pb-6">

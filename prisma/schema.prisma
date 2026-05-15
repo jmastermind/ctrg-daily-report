@@ -23,6 +23,7 @@ model User {
   passwordHash   String
   displayName    String
   departmentName String?
+  signatureImage String?  @db.Text
   role           Role     @default(USER)
   active         Boolean  @default(true)
   createdAt      DateTime @default(now())

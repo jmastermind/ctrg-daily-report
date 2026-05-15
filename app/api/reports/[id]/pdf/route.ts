@@ -152,7 +152,7 @@ function buildDocument(report: any, logoBase64: string | null) {
       fieldHalf('Datum', dateStr),
       fieldHalf('Smjena', report.smjena),
       fieldHalf('Voditelj odjela', report.user?.displayName ?? report.userId),
-      fieldHalf('Naziv odjela', report.user?.departmentName),
+      fieldHalf('Naziv odjela', report.user?.departmentName ?? null),
     ),
 
     sectionTitle('2. Stanje odjela'),
@@ -220,6 +220,12 @@ function buildDocument(report: any, logoBase64: string | null) {
     h(View, { style: s.signatureLine },
       h(View, { style: s.signatureBlock },
         h(Text, { style: s.signatureLabel }, '9. POTPIS — Voditelj odjela'),
+        report.user?.signatureImage
+          ? h(Image, {
+              style: { width: 120, height: 40, objectFit: 'contain', marginBottom: 4 },
+              src: `data:image/png;base64,${report.user.signatureImage}`,
+            })
+          : null,
         h(Text, { style: s.signatureValue }, report.user?.displayName ?? report.userId),
       ),
       h(View, { style: s.signatureBlock },
@@ -245,7 +251,7 @@ export async function GET(
 
   const report = await prisma.report.findUnique({
     where: { id },
-    include: { user: { select: { id: true, displayName: true, departmentName: true } } },
+    include: { user: { select: { id: true, displayName: true, departmentName: true, signatureImage: true } } },
   });
 
   if (!report) return Response.json({ error: 'Izvještaj nije pronađen.' }, { status: 404 });

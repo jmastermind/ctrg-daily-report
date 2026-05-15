@@ -108,6 +108,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           {(user.role === 'USER' || user.role === 'ADMIN') && (
             <NavLink href="/reports/new" label="Novi izvještaj" icon="✏️" />
           )}
+          <NavLink href="/profile" label="Moj profil" icon="👤" />
           {user.role === 'ADMIN' && (
             <NavLink href="/admin/users" label="Korisnici" icon="👥" />
           )}
