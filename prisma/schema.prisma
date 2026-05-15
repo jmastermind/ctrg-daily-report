@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  SUPERVISOR
+  ADMIN
+}
+
+enum ReportStatus {
+  DRAFT
+  SUBMITTED
+}
+
+model User {
+  id             String   @id @default(cuid())
+  username       String   @unique
+  passwordHash   String
+  displayName    String
+  departmentName String?
+  role           Role     @default(USER)
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  reports        Report[]
+}
+
+model Report {
+  id        String       @id @default(cuid())
+  userId    String
+  user      User         @relation(fields: [userId], references: [id])
+  date      DateTime     @db.Date
+  status    ReportStatus @default(DRAFT)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  smjena                     String?
+  urednostCistoca            String?
+  stanjePolica               String?
+  cijeneDeklaracije          Boolean?
+  uoceniProblemi             String?
+  artiklNedostaje            String?
+  artiklNajprodavaniji       String?
+  robaOtpis                  String?
+  potrebneNarudzbe           String?
+  top1000Izlozenost          String?
+  procjenaDnevneProdaje      String?
+  uspjesniArtikliAkcije      String?
+  problemiProdaje            String?
+  prijedloziPovecanjaProdaje String?
+  prisustvouUredno           Boolean?
+  problemiOrganizacijeRada   String?
+  napomeneZaposlenici        String?
+  dodatnaEdukacija           String?
+  brojReklamacija            String?
+  vrstaReklamacija           String?
+  nacinRjesenja              String?
+  pohvaleKomentari           String?
+  sigurnosniProblemi         String?
+  kvaroviOpreme              String?
+  servisOdrzavanje           String?
+  zastiteNaRadu              Boolean?
+  dodatneNapomene            String?
+  datumVrijemePredaje        DateTime?
+}

@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: ctrg_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ctrg_reports
+      POSTGRES_USER: ctrg
+      POSTGRES_PASSWORD: ctrg_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ctrg -d ctrg_reports"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ctrg_app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://ctrg:ctrg_pass@db:5432/ctrg_reports
+      JWT_SECRET: ${JWT_SECRET:-ctrg-change-this-secret-in-production-now}
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_data:
