@@ -50,6 +50,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --chown=nextjs:nodejs docker-entrypoint.sh ./
 RUN chmod +x docker-entrypoint.sh
 
+# prisma migrate deploy (runs as nextjs) needs to extract the schema-engine
+# binary into node_modules/@prisma/engines — give that user write access
+RUN chown -R nextjs:nodejs node_modules/@prisma node_modules/.prisma node_modules/prisma
+
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000
