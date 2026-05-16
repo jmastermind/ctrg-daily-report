@@ -89,7 +89,7 @@ export default function ReportDetailPage() {
     fetch('/api/auth/me').then((r) => r.json()).then((u) => setRole(u.role));
     fetch(`/api/reports/${id}`)
       .then((r) => r.ok ? r.json() : null)
-      .then((data) => { setReport(data); setLoading(false); });
+      .then((data) => { setReport(data?.report ?? data); setLoading(false); });
   }, [id]);
 
   async function submit() {
@@ -100,7 +100,7 @@ export default function ReportDetailPage() {
       body: JSON.stringify({ submit: true }),
     });
     const data = await fetch(`/api/reports/${id}`).then((r) => r.json());
-    setReport(data);
+    setReport(data?.report ?? data);
     setSubmitting(false);
   }
 
