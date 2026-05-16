@@ -43,7 +43,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="flex justify-center mb-8">
           <Image
-            src="/logo.png"
+            src="/logo-app.png"
             alt="Color Trgovina"
             width={240}
             height={80}

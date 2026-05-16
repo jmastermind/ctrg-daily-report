@@ -218,7 +218,7 @@ export default function ReportsPage() {
                         >
                           PDF
                         </a>
-                        {r.status === 'DRAFT' && role !== 'SUPERVISOR' && (
+                        {(role === 'ADMIN' || (r.status === 'DRAFT' && role !== 'SUPERVISOR')) && (
                           <button
                             onClick={() => deleteReport(r.id)}
                             className="text-xs px-3 py-1.5 text-red-500 hover:bg-red-50 rounded-md transition"

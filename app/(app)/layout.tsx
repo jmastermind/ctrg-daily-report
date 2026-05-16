@@ -77,7 +77,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         {/* Logo */}
         <div className="px-4 py-5 border-b border-white/10">
           <Image
-            src="/logo.png"
+            src="/logo-app.png"
             alt="Color Trgovina"
             width={160}
             height={54}

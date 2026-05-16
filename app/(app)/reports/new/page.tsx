@@ -229,9 +229,8 @@ export default function NewReportPage() {
           className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C41230] focus:border-transparent transition bg-white"
         >
           <option value="">Odaberite smjenu</option>
-          <option value="I. smjena (06:00–14:00)">I. smjena (06:00–14:00)</option>
-          <option value="II. smjena (14:00–22:00)">II. smjena (14:00–22:00)</option>
-          <option value="III. smjena (22:00–06:00)">III. smjena (22:00–06:00)</option>
+          <option value="I. smjena">I. smjena</option>
+          <option value="II. smjena">II. smjena</option>
         </select>
       </div>
     </div>,
