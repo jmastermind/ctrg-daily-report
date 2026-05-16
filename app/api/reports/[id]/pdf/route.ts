@@ -3,6 +3,7 @@ import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import {
   Document,
+  Font,
   Page,
   Text,
   View,
@@ -13,6 +14,20 @@ import {
 import { createElement as h } from 'react';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+
+// Register Roboto which supports Croatian characters (ć, š, ž, đ, č)
+const fontDir = join(process.cwd(), 'public', 'fonts');
+if (existsSync(join(fontDir, 'Roboto-Regular.ttf'))) {
+  Font.register({
+    family: 'Roboto',
+    fonts: [
+      { src: join(fontDir, 'Roboto-Regular.ttf') },
+      { src: join(fontDir, 'Roboto-Bold.ttf'), fontWeight: 700 },
+    ],
+  });
+}
+const FONT = existsSync(join(fontDir, 'Roboto-Regular.ttf')) ? 'Roboto' : 'Helvetica';
+const FONT_BOLD = existsSync(join(fontDir, 'Roboto-Bold.ttf')) ? 'Roboto' : 'Helvetica-Bold';
 
 // Exact footer text from the Word template
 const FOOTER_LINE1 = 'Color trgovina d.o.o. za trgovinu, Industrijska 42, 34 000 Požega, OIB 44543107610, MB 2068672';
@@ -29,18 +44,17 @@ const s = StyleSheet.create({
     paddingBottom: 60,
     paddingHorizontal: 32,
     fontSize: 9,
-    fontFamily: 'Helvetica',
+    fontFamily: FONT,
     flexDirection: 'column',
   },
   header: {
     marginBottom: 10,
-    flexDirection: 'row',
     alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: '#e5e7eb',
     paddingBottom: 6,
   },
-  logo: { width: 160, height: 50, objectFit: 'contain' },
+  logo: { width: '100%', height: 70, objectFit: 'contain' },
   footer: {
     position: 'absolute',
     bottom: 12,
@@ -54,7 +68,7 @@ const s = StyleSheet.create({
   // Section styling
   sectionTitle: {
     fontSize: 9,
-    fontFamily: 'Helvetica-Bold',
+    fontFamily: FONT_BOLD,
     color: PRIMARY,
     backgroundColor: '#fff0f2',
     paddingVertical: 3,
@@ -71,7 +85,7 @@ const s = StyleSheet.create({
   fieldLabel: {
     fontSize: 6,
     color: '#9ca3af',
-    fontFamily: 'Helvetica-Bold',
+    fontFamily: FONT_BOLD,
     textTransform: 'uppercase',
     letterSpacing: 0.3,
     marginBottom: 1,
@@ -89,7 +103,7 @@ const s = StyleSheet.create({
   },
   signatureBlock: { width: '45%' },
   signatureLabel: { fontSize: 7, color: '#6b7280', marginBottom: 2 },
-  signatureValue: { fontSize: 8.5, color: '#111827', fontFamily: 'Helvetica-Bold' },
+  signatureValue: { fontSize: 8.5, color: '#111827', fontFamily: FONT_BOLD },
 });
 
 function display(v: unknown): string {
@@ -118,7 +132,7 @@ function header(logoBase64: string | null) {
   return h(View, { style: s.header },
     logoBase64
       ? h(Image, { style: s.logo, src: `data:image/png;base64,${logoBase64}` })
-      : h(Text, { style: { fontSize: 12, fontFamily: 'Helvetica-Bold', color: PRIMARY } }, 'Color Trgovina')
+      : h(Text, { style: { fontSize: 12, fontFamily: FONT_BOLD, color: PRIMARY } }, 'Color Trgovina')
   );
 }
 

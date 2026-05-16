@@ -10,12 +10,20 @@ RUN npm ci --ignore-scripts
 # ── builder: generate prisma client + next build ──────────────────────────────
 FROM base AS builder
 WORKDIR /app
+RUN apk add --no-cache curl
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 # Placeholder URL so prisma generate doesn't fail without a real DB
 ENV DATABASE_URL=postgresql://build:build@localhost:5432/build
+
+# Download Roboto font (supports Croatian characters) for PDF generation
+RUN mkdir -p public/fonts && \
+    curl -sL -o public/fonts/Roboto-Regular.ttf \
+      "https://github.com/google/fonts/raw/main/apache/roboto/static/Roboto-Regular.ttf" && \
+    curl -sL -o public/fonts/Roboto-Bold.ttf \
+      "https://github.com/google/fonts/raw/main/apache/roboto/static/Roboto-Bold.ttf"
 
 RUN npx prisma generate
 RUN npm run build

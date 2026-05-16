@@ -50,6 +50,12 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
+  // Allow any authenticated user to read/update their own profile
+  const selfMatch = pathname.match(/^\/api\/users\/([^/]+)$/);
+  if (selfMatch && selfMatch[1] === payload.id) {
+    return NextResponse.next();
+  }
+
   if (isAdminRoute && payload.role !== 'ADMIN') {
     if (pathname.startsWith('/api/')) {
       return NextResponse.json(
