@@ -91,7 +91,7 @@ const s = StyleSheet.create({
     marginBottom: 1,
   },
   fieldValue: { fontSize: 8.5, color: '#111827' },
-  fieldEmpty: { fontSize: 8.5, color: '#d1d5db', fontStyle: 'italic' },
+  fieldEmpty: { fontSize: 8.5, color: '#d1d5db' },
   // Signature line at end
   signatureLine: {
     marginTop: 16,
