@@ -283,12 +283,15 @@ export async function GET(
   const buffer = await renderToBuffer(doc);
 
   const dateStr = report.date ? new Date(report.date).toISOString().slice(0, 10) : 'izvjestaj';
+  const deptSlug = report.user?.departmentName
+    ? '-' + report.user.departmentName.toLowerCase().replace(/[čć]/g, 'c').replace(/[šš]/g, 's').replace(/ž/g, 'z').replace(/đ/g, 'd').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+    : '';
 
   return new Response(buffer as unknown as BodyInit, {
     status: 200,
     headers: {
       'Content-Type': 'application/pdf',
-      'Content-Disposition': `attachment; filename="izvjestaj-${dateStr}.pdf"`,
+      'Content-Disposition': `attachment; filename="izvjestaj${deptSlug}-${dateStr}.pdf"`,
     },
   });
 }
