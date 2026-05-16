@@ -21,8 +21,8 @@ async function getPayload(request: NextRequest) {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const isAdminRoute =
-    pathname.startsWith('/admin') || pathname.startsWith('/api/users');
+  const isAdminRoute = pathname.startsWith('/admin');
+  const isAdminOrSupervisorRoute = pathname.startsWith('/api/users');
 
   const isProtectedRoute =
     pathname.startsWith('/dashboard') ||
@@ -56,12 +56,13 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  if (isAdminOrSupervisorRoute && payload.role === 'USER') {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
   if (isAdminRoute && payload.role !== 'ADMIN') {
     if (pathname.startsWith('/api/')) {
-      return NextResponse.json(
-        { error: 'Forbidden' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }

@@ -59,7 +59,7 @@ export default function ReportsPage() {
       .then((r) => r.json())
       .then((u) => {
         setRole(u.role);
-        if (u.role === 'ADMIN') {
+        if (u.role !== 'USER') {
           fetch('/api/users')
             .then((r) => r.ok ? r.json() : { users: [] })
             .then((d) => setUsers(Array.isArray(d.users) ? d.users : Array.isArray(d) ? d : []));
